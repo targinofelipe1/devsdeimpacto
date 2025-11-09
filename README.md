@@ -665,9 +665,9 @@ Cada modo possui um sistema prompt otimizado:
 
 ### Integrantes
 
+- **Danillo Coelho Barbosa**
 - **Felipe Tragino do Nascimento**
 - **Filipe da Silva Rodrigues**
-- **Danillo Coelho Barbosa**
 - **Jardielen de Sousa Nascimento**
 
 ---
