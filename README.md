@@ -661,6 +661,17 @@ Cada modo possui um sistema prompt otimizado:
 
 ---
 
+## 👥 Equipe
+
+### Integrantes
+
+- **Felipe Tragino do Nascimento**
+- **Filipe da Silva Rodrigues**
+- **Danillo Coelho Barbosa**
+- **Jardielen de Sousa Nascimento**
+
+---
+
 ## 🗺️ Roadmap
 
 ### Versão 1.0 (Q2 2025)
