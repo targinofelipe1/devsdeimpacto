@@ -354,7 +354,6 @@ export function ChatAssistant({ user, onClose }: ChatAssistantProps) {
 
       if (mood.needsAlert) {
         responseText = `Obrigada por compartilhar como você está se sentindo. Percebi que você está ${mood.label.toLowerCase()} e isso é importante.\n\n`;
-        responseText += `🔔 Um alerta foi enviado automaticamente para a coordenação pedagógica para que possam te oferecer o suporte necessário.\n\n`;
 
         if (mood.value === "worried" || mood.value === "anxious") {
           responseText += `💙 Enquanto isso, que tal tentarmos alguns exercícios de respiração? Posso te guiar.\n\n`;
