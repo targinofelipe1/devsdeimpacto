@@ -9,13 +9,42 @@ interface ProfilePageProps {
   onUpdateAvatar: (avatar: string) => void;
 }
 
-const badges = [
-  { id: 1, name: 'Primeira Vitória', icon: '🏆', earned: true },
-  { id: 2, name: 'Explorador', icon: '🗺️', earned: true },
-  { id: 3, name: 'Persistente', icon: '💪', earned: true },
-  { id: 4, name: 'Mestre da Matemática', icon: '🔢', earned: false },
-  { id: 5, name: 'Leitor Voraz', icon: '📚', earned: false },
-  { id: 6, name: 'Cientista', icon: '🔬', earned: false }
+// Badges da loja - mesmas da BadgeShop
+const shopBadges = [
+  // Latão (100 gemas)
+  { id: 'brass-explorer', name: 'Explorador de Latão', tier: 'brass', icon: '🗺️', color: 'from-[#b08d57] to-[#9a7b4f]', borderColor: 'border-[#7d6841]' },
+  { id: 'brass-reader', name: 'Leitor de Latão', tier: 'brass', icon: '📖', color: 'from-[#b08d57] to-[#9a7b4f]', borderColor: 'border-[#7d6841]' },
+  { id: 'brass-math', name: 'Matemático de Latão', tier: 'brass', icon: '🔢', color: 'from-[#b08d57] to-[#9a7b4f]', borderColor: 'border-[#7d6841]' },
+  
+  // Bronze (200 gemas)
+  { id: 'bronze-warrior', name: 'Guerreiro de Bronze', tier: 'bronze', icon: '⚔️', color: 'from-[#cd7f32] to-[#b87333]', borderColor: 'border-[#8b5a2b]' },
+  { id: 'bronze-scientist', name: 'Cientista de Bronze', tier: 'bronze', icon: '�', color: 'from-[#cd7f32] to-[#b87333]', borderColor: 'border-[#8b5a2b]' },
+  { id: 'bronze-linguist', name: 'Linguista de Bronze', tier: 'bronze', icon: '🌐', color: 'from-[#cd7f32] to-[#b87333]', borderColor: 'border-[#8b5a2b]' },
+  
+  // Prata (300 gemas)
+  { id: 'silver-champion', name: 'Campeão de Prata', tier: 'silver', icon: '🏆', color: 'from-[#c0c0c0] to-[#a8a8a8]', borderColor: 'border-[#808080]' },
+  { id: 'silver-genius', name: 'Gênio de Prata', tier: 'silver', icon: '🧠', color: 'from-[#c0c0c0] to-[#a8a8a8]', borderColor: 'border-[#808080]' },
+  { id: 'silver-artist', name: 'Artista de Prata', tier: 'silver', icon: '🎨', color: 'from-[#c0c0c0] to-[#a8a8a8]', borderColor: 'border-[#808080]' },
+  
+  // Ouro (400 gemas)
+  { id: 'gold-master', name: 'Mestre de Ouro', tier: 'gold', icon: '👑', color: 'from-[#ffd700] to-[#ffcc00]', borderColor: 'border-[#daa520]' },
+  { id: 'gold-legend', name: 'Lenda de Ouro', tier: 'gold', icon: '⭐', color: 'from-[#ffd700] to-[#ffcc00]', borderColor: 'border-[#daa520]' },
+  { id: 'gold-prodigy', name: 'Prodígio de Ouro', tier: 'gold', icon: '�', color: 'from-[#ffd700] to-[#ffcc00]', borderColor: 'border-[#daa520]' },
+  
+  // Platina (500 gemas)
+  { id: 'platinum-supreme', name: 'Supremo de Platina', tier: 'platinum', icon: '💎', color: 'from-[#e5e4e2] to-[#d3d3d3]', borderColor: 'border-[#b0b0b0]' },
+  { id: 'platinum-transcendent', name: 'Transcendente de Platina', tier: 'platinum', icon: '🌟', color: 'from-[#e5e4e2] to-[#d3d3d3]', borderColor: 'border-[#b0b0b0]' },
+  { id: 'platinum-immortal', name: 'Imortal de Platina', tier: 'platinum', icon: '✨', color: 'from-[#e5e4e2] to-[#d3d3d3]', borderColor: 'border-[#b0b0b0]' },
+];
+
+// Badges de conquistas (antigas)
+const achievementBadges = [
+  { id: 'first-victory', name: 'Primeira Vitória', icon: '🏆' },
+  { id: 'explorer', name: 'Explorador', icon: '🗺️' },
+  { id: 'persistent', name: 'Persistente', icon: '💪' },
+  { id: 'math-master', name: 'Mestre da Matemática', icon: '�' },
+  { id: 'bookworm', name: 'Leitor Voraz', icon: '📚' },
+  { id: 'scientist', name: 'Cientista', icon: '🔬' }
 ];
 
 const achievements = [
@@ -50,7 +79,11 @@ export function ProfilePage({ user, onBack, onUpdateAvatar }: ProfilePageProps) 
   const [showAvatarCustomizer, setShowAvatarCustomizer] = useState(false);
   const levelInfo = getLevelInfo(user.level);
   const progressToNextLevel = (user.xp % 500) / 500 * 100;
-  const earnedBadges = badges.filter(b => b.earned);
+  
+  // Filtra as badges que o usuário comprou
+  const userPurchasedBadges = shopBadges.filter(badge => user.badges?.includes(badge.id));
+  const totalBadgesAvailable = shopBadges.length;
+  const earnedBadgesCount = userPurchasedBadges.length;
 
   return (
     <div className="min-h-screen bg-[#8bd3dd] pb-20">
@@ -168,21 +201,28 @@ export function ProfilePage({ user, onBack, onUpdateAvatar }: ProfilePageProps) 
 
             <div className="mb-4 bg-[#ffcc33] border-4 border-[#d4a02c] p-3">
               <p className="text-[#3e2723]">
-                {earnedBadges.length} de {badges.length} insígnias conquistadas
+                {earnedBadgesCount} de {totalBadgesAvailable} insígnias conquistadas
               </p>
             </div>
 
-            <div className="grid grid-cols-3 gap-4 mb-6">
-              {badges.map((badge) => (
-                <div
-                  key={badge.id}
-                  className={`${badge.earned ? 'bg-gradient-to-b from-[#ffcc33] to-[#ff9933] border-[#d4a02c]' : 'bg-[#7a7a7a] border-[#5a5a5a] opacity-50'} p-4 border-4 text-center pixel-shadow-sm`}
-                >
-                  <div className="text-4xl mb-2">{badge.icon}</div>
-                  <p className={badge.earned ? 'text-[#3e2723]' : 'text-white'}>{badge.name}</p>
-                </div>
-              ))}
-            </div>
+            {userPurchasedBadges.length > 0 ? (
+              <div className="grid grid-cols-3 gap-4 mb-6">
+                {userPurchasedBadges.map((badge) => (
+                  <div
+                    key={badge.id}
+                    className={`bg-gradient-to-b ${badge.color} ${badge.borderColor} border-4 p-4 text-center pixel-shadow-sm`}
+                  >
+                    <div className="text-4xl mb-2">{badge.icon}</div>
+                    <p className="text-white drop-shadow-[1px_1px_0_rgba(0,0,0,0.5)] text-sm">{badge.name}</p>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="bg-[#d3d3d3] border-4 border-[#a8a8a8] p-6 text-center mb-6">
+                <p className="text-[#6d4c41] mb-2">🏅 Nenhuma insígnia conquistada ainda!</p>
+                <p className="text-[#6d4c41] text-sm">Visite a Loja de Badges e compre suas primeiras insígnias com gemas.</p>
+              </div>
+            )}
 
             <h3 className="mb-4 text-[#3e2723]">Histórico de Conquistas</h3>
             <div className="space-y-3 max-h-64 overflow-y-auto">

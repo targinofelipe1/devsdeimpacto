@@ -9,6 +9,8 @@ import { EmotionalAssistant } from './components/EmotionalAssistant';
 import { ProfilePage } from './components/ProfilePage';
 import { RankingPage } from './components/RankingPage';
 import { ChatAssistant } from './components/ChatAssistant';
+import { BadgeShop, BadgeItem } from './components/BadgeShop';
+import { LearningPath } from './components/LearningPath';
 
 export type UserRole = 'student' | 'teacher' | 'coordination' | null;
 
@@ -22,6 +24,7 @@ export interface User {
   xp: number;
   gems: number;
   emotionalState?: string;
+  badges?: string[];
 }
 
 export interface AppContextType {
@@ -29,9 +32,10 @@ export interface AppContextType {
 }
 
 export default function App() {
-  const [currentView, setCurrentView] = useState<'home' | 'dashboard' | 'battle' | 'emotional' | 'profile' | 'ranking' | 'chat'>('home');
+  const [currentView, setCurrentView] = useState<'home' | 'dashboard' | 'battle' | 'emotional' | 'profile' | 'ranking' | 'chat' | 'shop' | 'path'>('home');
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [selectedTopic, setSelectedTopic] = useState<string>('');
+  const [selectedSubject, setSelectedSubject] = useState<string>('');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const handleLogin = (email: string, password: string) => {
@@ -46,7 +50,8 @@ export default function App() {
         level: 2,
         xp: 450,
         gems: 125,
-        emotionalState: 'happy'
+        emotionalState: 'happy',
+        badges: []
       },
       'professor@demo.com': {
         id: '2',
@@ -79,7 +84,12 @@ export default function App() {
   };
 
   const handleStartBattle = (topic: string) => {
-    setSelectedTopic(topic);
+    setSelectedSubject(topic);
+    setCurrentView('path');
+  };
+
+  const handleStartTopic = (topicId: string) => {
+    setSelectedTopic(topicId);
     setCurrentView('battle');
   };
 
@@ -96,7 +106,7 @@ export default function App() {
     }
   };
 
-  const navigateTo = (view: 'home' | 'dashboard' | 'battle' | 'emotional' | 'profile' | 'ranking' | 'chat') => {
+  const navigateTo = (view: 'home' | 'dashboard' | 'battle' | 'emotional' | 'profile' | 'ranking' | 'chat' | 'shop' | 'path') => {
     setCurrentView(view);
   };
 
@@ -106,12 +116,20 @@ export default function App() {
     setCurrentView('home');
   };
 
-  if (!isAuthenticated) {
-    return <LoginPage onLogin={handleLogin} />;
-  }
+  const handlePurchaseBadge = (badge: BadgeItem) => {
+    if (!currentUser) return;
+    
+    if (currentUser.gems >= badge.price && !currentUser.badges?.includes(badge.id)) {
+      setCurrentUser({
+        ...currentUser,
+        gems: currentUser.gems - badge.price,
+        badges: [...(currentUser.badges || []), badge.id]
+      });
+    }
+  };
 
-  if (currentView === 'home' || !currentUser) {
-    return <HomePage onLogin={handleLogin} />;
+  if (!isAuthenticated || !currentUser) {
+    return <LoginPage onLogin={handleLogin} />;
   }
 
   if (currentView === 'battle' && currentUser.role === 'student') {
@@ -119,7 +137,18 @@ export default function App() {
       <BattleQuiz
         topic={selectedTopic}
         onComplete={handleBattleComplete}
+        onBack={() => setCurrentView('path')}
+      />
+    );
+  }
+
+  if (currentView === 'path' && currentUser.role === 'student') {
+    return (
+      <LearningPath
+        user={currentUser}
+        subject={selectedSubject}
         onBack={() => setCurrentView('dashboard')}
+        onStartTopic={handleStartTopic}
       />
     );
   }
@@ -138,6 +167,16 @@ export default function App() {
       <ChatAssistant
         user={currentUser}
         onClose={() => setCurrentView('dashboard')}
+      />
+    );
+  }
+
+  if (currentView === 'shop' && currentUser.role === 'student') {
+    return (
+      <BadgeShop
+        user={currentUser}
+        onBack={() => setCurrentView('dashboard')}
+        onPurchase={handlePurchaseBadge}
       />
     );
   }

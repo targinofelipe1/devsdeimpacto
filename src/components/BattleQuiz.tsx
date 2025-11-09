@@ -1,12 +1,6 @@
 import { useState, useEffect } from 'react';
 import { ArrowLeft, Lightbulb } from 'lucide-react';
-
-interface Question {
-  question: string;
-  options: string[];
-  correctAnswer: number;
-  hint?: string;
-}
+import { topicQuestions, Question } from '../data/topicQuestions';
 
 interface BattleQuizProps {
   topic: string;
@@ -14,75 +8,8 @@ interface BattleQuizProps {
   onBack: () => void;
 }
 
-const quizData: Record<string, Question[]> = {
-  math: [
-    {
-      question: 'Qual é o resultado de 15 + 27?',
-      options: ['32', '42', '52', '62'],
-      correctAnswer: 1,
-      hint: 'Dica: Comece somando as unidades (5+7) e depois as dezenas!'
-    },
-    {
-      question: 'Quanto é 8 × 9?',
-      options: ['63', '72', '81', '90'],
-      correctAnswer: 1,
-      hint: 'Dica: Pense em 8 × 10 e depois subtraia 8!'
-    },
-    {
-      question: 'Qual é a metade de 64?',
-      options: ['28', '30', '32', '34'],
-      correctAnswer: 2,
-      hint: 'Dica: Dividir por 2 é o mesmo que encontrar a metade!'
-    },
-    {
-      question: 'Quanto é 100 - 37?',
-      options: ['57', '63', '67', '73'],
-      correctAnswer: 1,
-      hint: 'Dica: Você pode pensar como 100 - 30 - 7'
-    },
-    {
-      question: 'Qual é o próximo número: 5, 10, 15, 20, __?',
-      options: ['22', '25', '30', '35'],
-      correctAnswer: 1,
-      hint: 'Dica: Os números estão aumentando de 5 em 5!'
-    }
-  ],
-  portuguese: [
-    {
-      question: 'Qual é o plural de "luz"?',
-      options: ['luzes', 'luzs', 'luze', 'luzez'],
-      correctAnswer: 0,
-      hint: 'Dica: Palavras terminadas em "z" fazem plural com "es"'
-    },
-    {
-      question: 'Qual alternativa tem um substantivo próprio?',
-      options: ['casa', 'Maria', 'livro', 'caneta'],
-      correctAnswer: 1,
-      hint: 'Dica: Substantivos próprios nomeiam pessoas, lugares específicos'
-    },
-    {
-      question: 'Qual é o sinônimo de "feliz"?',
-      options: ['triste', 'alegre', 'zangado', 'cansado'],
-      correctAnswer: 1,
-      hint: 'Dica: Sinônimo é uma palavra com significado parecido'
-    },
-    {
-      question: 'Quantas sílabas tem "borboleta"?',
-      options: ['2', '3', '4', '5'],
-      correctAnswer: 2,
-      hint: 'Dica: Separe assim: bor-bo-le-ta'
-    },
-    {
-      question: 'Qual frase está correta?',
-      options: ['Nós vai ao parque', 'Nós vamos ao parque', 'Nós vão ao parque', 'Nós vais ao parque'],
-      correctAnswer: 1,
-      hint: 'Dica: O verbo precisa concordar com "nós"'
-    }
-  ]
-};
-
 export function BattleQuiz({ topic, onComplete, onBack }: BattleQuizProps) {
-  const [questions] = useState<Question[]>(quizData[topic] || quizData.math);
+  const [questions] = useState<Question[]>(topicQuestions[topic] || topicQuestions['math-1']);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [monsterHealth, setMonsterHealth] = useState(questions.length);
   const [correctAnswers, setCorrectAnswers] = useState(0);

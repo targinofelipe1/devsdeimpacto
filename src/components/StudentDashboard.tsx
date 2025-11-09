@@ -1,11 +1,11 @@
 import { User } from '../App';
-import { Sparkles, MessageCircle, Trophy, User as UserIcon, LogOut, Lightbulb, Headphones, Sword } from 'lucide-react';
+import { Sparkles, MessageCircle, Trophy, User as UserIcon, LogOut, Lightbulb, Headphones, Sword, ShoppingBag } from 'lucide-react';
 import { SensoryModeToggle } from './SensoryModeToggle';
 
 interface StudentDashboardProps {
   user: User;
   onStartBattle: (topic: string) => void;
-  onNavigate: (view: 'home' | 'dashboard' | 'battle' | 'emotional' | 'profile' | 'ranking' | 'chat') => void;
+  onNavigate: (view: 'home' | 'dashboard' | 'battle' | 'emotional' | 'profile' | 'ranking' | 'chat' | 'shop' | 'path') => void;
   onLogout: () => void;
 }
 
@@ -67,10 +67,14 @@ export function StudentDashboard({ user, onStartBattle, onNavigate, onLogout }: 
             </div>
             <div className="flex items-center gap-4">
               <SensoryModeToggle />
-              <div className="bg-[#ffcc33] px-4 py-2 border-4 border-[#d4a02c] flex items-center gap-2 pixel-shadow-sm">
+              <button
+                onClick={() => onNavigate('shop')}
+                className="bg-[#ffcc33] hover:bg-[#ffdd44] px-4 py-2 border-4 border-[#d4a02c] flex items-center gap-2 pixel-shadow-sm pixel-button transition-all"
+                title="Clique para abrir a Loja de Badges"
+              >
                 <Sparkles className="w-5 h-5 text-[#3e2723]" />
-                <span className="text-[#3e2723]">{user.gems} Gemas</span>
-              </div>
+                <span className="text-[#3e2723] font-bold">{user.gems} Gemas</span>
+              </button>
               <button
                 onClick={() => onNavigate('profile')}
                 className="bg-white hover:bg-gray-200 px-4 py-2 border-4 border-[#3e2723] flex items-center gap-2 pixel-button transition-all"
