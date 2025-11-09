@@ -1,1 +1,23 @@
-node_modules/
+node_modules
+
+# Variáveis de ambiente
+.env
+.env.local
+.env.*.local
+
+# Build
+dist
+dist-ssr
+*.local
+
+# Editor
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
