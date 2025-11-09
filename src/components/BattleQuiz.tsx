@@ -18,6 +18,23 @@ export function BattleQuiz({ topic, onComplete, onBack }: BattleQuizProps) {
   const [hintCount, setHintCount] = useState(2);
   const [gameOver, setGameOver] = useState(false);
   const [showFeedback, setShowFeedback] = useState(false);
+  const [feedbackText, setFeedbackText] = useState('');
+
+  const motivationalMessages = [
+    'Excelente! Continue assim!',
+    'Muito bem! Você está indo ótimo!',
+    'Parabéns! Seu esforço está valendo a pena!',
+    'Incrível! Você está dominando o conteúdo!',
+    'Show! Continue aprendendo!'
+  ];
+
+  const encouragementMessages = [
+    'Não desanime, você consegue!',
+    'Erros fazem parte do aprendizado.',
+    'Continue tentando, você vai acertar!',
+    'A prática leva à perfeição!',
+    'Você está aprendendo, e isso é o que importa!'
+  ];
 
   const handleAnswer = (index: number) => {
     if (selectedAnswer !== null) return;
@@ -25,11 +42,22 @@ export function BattleQuiz({ topic, onComplete, onBack }: BattleQuizProps) {
     setSelectedAnswer(index);
     setShowFeedback(true);
 
-    const isCorrect = index === questions[currentQuestion].correctAnswer;
-    
+    const question = questions[currentQuestion];
+    const isCorrect = index === question.correctAnswer;
+
     if (isCorrect) {
       setCorrectAnswers(prev => prev + 1);
       setMonsterHealth(prev => prev - 1);
+      const msg = motivationalMessages[Math.floor(Math.random() * motivationalMessages.length)];
+      setFeedbackText(`✅ Correto! ${msg}`);
+    } else {
+      const msg = encouragementMessages[Math.floor(Math.random() * encouragementMessages.length)];
+      setFeedbackText(
+        `❌ Resposta incorreta.  
+A correta é "${question.options[question.correctAnswer]}".  
+Explicação: ${question.hint ? question.hint : 'Revise o conteúdo e tente novamente.'}  
+${msg}`
+      );
     }
 
     setTimeout(() => {
@@ -37,11 +65,12 @@ export function BattleQuiz({ topic, onComplete, onBack }: BattleQuizProps) {
         setCurrentQuestion(prev => prev + 1);
         setSelectedAnswer(null);
         setShowFeedback(false);
+        setFeedbackText('');
         setShowHint(false);
       } else {
         setGameOver(true);
       }
-    }, 1500);
+    }, 4000); // 4 segundos para ver o feedback
   };
 
   const toggleHint = () => {
@@ -106,7 +135,7 @@ export function BattleQuiz({ topic, onComplete, onBack }: BattleQuizProps) {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-red-900 to-purple-900 relative overflow-hidden">
-      {/* Back Button */}
+      {/* Botão Voltar */}
       <button
         onClick={onBack}
         className="absolute top-4 left-4 bg-white hover:bg-gray-100 px-4 py-2 rounded-lg border-2 border-gray-300 flex items-center gap-2 transition-colors z-10"
@@ -115,7 +144,7 @@ export function BattleQuiz({ topic, onComplete, onBack }: BattleQuizProps) {
         <span>Voltar</span>
       </button>
 
-      {/* Hint Button */}
+      {/* Botão de Dica */}
       <button
         onClick={toggleHint}
         disabled={hintCount === 0}
@@ -126,7 +155,7 @@ export function BattleQuiz({ topic, onComplete, onBack }: BattleQuizProps) {
       </button>
 
       <div className="container mx-auto px-4 py-8">
-        {/* Monster Area */}
+        {/* Monstro */}
         <div className="text-center mb-8">
           <div className="inline-block bg-black/30 rounded-lg p-4 border-2 border-red-500">
             <div className="text-8xl mb-4 animate-bounce">👹</div>
@@ -142,7 +171,7 @@ export function BattleQuiz({ topic, onComplete, onBack }: BattleQuizProps) {
           </div>
         </div>
 
-        {/* Question Area */}
+        {/* Pergunta */}
         <div className="max-w-2xl mx-auto bg-white rounded-lg border-4 border-gray-700 shadow-2xl p-8 mb-8">
           <div className="mb-4">
             <span className="bg-purple-600 text-white px-3 py-1 rounded">
@@ -191,9 +220,16 @@ export function BattleQuiz({ topic, onComplete, onBack }: BattleQuizProps) {
               );
             })}
           </div>
+
+          {/* Feedback */}
+          {showFeedback && (
+            <div className="mt-6 bg-gray-100 border-2 border-gray-400 rounded-lg p-4 text-left whitespace-pre-line">
+              <p dangerouslySetInnerHTML={{ __html: feedbackText }} />
+            </div>
+          )}
         </div>
 
-        {/* Hero Area */}
+        {/* Herói */}
         <div className="text-center">
           <div className="inline-block bg-black/30 rounded-lg p-4 border-2 border-green-500">
             <p className="text-white mb-2">Seu Herói</p>
