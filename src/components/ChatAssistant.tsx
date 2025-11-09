@@ -41,7 +41,7 @@ export function ChatAssistant({ user, onClose }: ChatAssistantProps) {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: "1",
-      text: "Olá! Estou aqui para ajudar! Por favor, faça o upload de um arquivo (PDF, imagem ou texto) e escolha um tom para sua resposta, ou apenas converse comigo. 😊",
+      text: "Oi! 👋 Eu sou sua assistente virtual!\n\nEstou aqui para te ajudar nos estudos e conversar com você! 😊\n\nPode me fazer perguntas, enviar arquivos (só no modo Aprendizado) ou só bater um papo. Escolha uma das abas acima para começar! ✨",
       sender: "assistant",
       timestamp: new Date(),
     },
@@ -154,7 +154,7 @@ export function ChatAssistant({ user, onClose }: ChatAssistantProps) {
     if (!validation.valid) {
       const errorMessage: Message = {
         id: Date.now().toString(),
-        text: `❌ Erro: ${validation.error}`,
+        text: `❌ Opa! Esse arquivo não deu certo: ${validation.error}\n\nTenta outro arquivo, tá?`,
         sender: "assistant",
         timestamp: new Date(),
       };
@@ -197,7 +197,7 @@ export function ChatAssistant({ user, onClose }: ChatAssistantProps) {
         if (!result.success) {
           const errorMessage: Message = {
             id: Date.now().toString() + "_error",
-            text: `❌ Erro ao processar arquivo: ${result.error}`,
+            text: `❌ Ops! Tive um problema pra abrir esse arquivo: ${result.error}\n\nTenta enviar de novo ou tenta outro arquivo!`,
             sender: "assistant",
             timestamp: new Date(),
           };
@@ -220,16 +220,16 @@ export function ChatAssistant({ user, onClose }: ChatAssistantProps) {
           content: result.content,
         };
 
-        // Mensagem de confirmação com attachment
+        // Mensagem de confirmação com attachment - linguagem acessível
         const confirmMessage: Message = {
           id: Date.now().toString() + "_confirm",
-          text: `✅ Arquivo processado com sucesso!\n${
+          text: `✅ Consegui abrir o arquivo!\n${
             result.metadata?.pageCount
-              ? `📄 ${result.metadata.pageCount} páginas detectadas\n`
+              ? `📄 Achei ${result.metadata.pageCount} páginas aqui!\n`
               : ""
           }${
             result.metadata?.wordCount
-              ? `📝 Aproximadamente ${result.metadata.wordCount} palavras`
+              ? `📝 Tem mais ou menos ${result.metadata.wordCount} palavras`
               : ""
           }`,
           sender: "assistant",
@@ -300,8 +300,8 @@ export function ChatAssistant({ user, onClose }: ChatAssistantProps) {
       const errorMessage: Message = {
         id: Date.now().toString() + "_error",
         text: pendingFile
-          ? `❌ Erro inesperado ao processar arquivo. Tente novamente.`
-          : "Desculpe, tive um problema ao processar sua mensagem. Pode tentar novamente?",
+          ? `❌ Ops! Deu um erro aqui. Tenta enviar o arquivo de novo, tá?`
+          : "Desculpa! Tive um probleminha aqui. Pode tentar de novo?",
         sender: "assistant",
         timestamp: new Date(),
       };
@@ -319,16 +319,21 @@ export function ChatAssistant({ user, onClose }: ChatAssistantProps) {
       setShowMoodSelector(true);
       const sessionMessage: Message = {
         id: Date.now().toString(),
-        text: "Como você está se sentindo hoje? Selecione o emoji que melhor representa seu estado emocional:",
+        text: "💙 Como você está se sentindo hoje?\n\nEscolhe o emoji que mostra como você tá se sentindo agora! Pode ser sincero, tá? 😊",
         sender: "assistant",
         timestamp: new Date(),
       };
       setMessages((prev) => [...prev, sessionMessage]);
     } else {
       setShowMoodSelector(false);
+      const modeLabels = {
+        learning: "Aprendizado 📚",
+        mood: "Humor 💖",
+        relax: "Relaxar ✨",
+      };
       const sessionMessage: Message = {
         id: Date.now().toString(),
-        text: `Mudando para a sessão de ${sessionConfig[session].label}! ${sessionConfig[session].emoji}\n\nEstou pronta para te ajudar neste modo.`,
+        text: `Legal! Agora a gente tá no modo ${modeLabels[session]}! ${sessionConfig[session].emoji}\n\nEstou aqui pra te ajudar! Como posso te ajudar hoje? 😊`,
         sender: "assistant",
         timestamp: new Date(),
       };
@@ -348,38 +353,38 @@ export function ChatAssistant({ user, onClose }: ChatAssistantProps) {
     };
     setMessages((prev) => [...prev, userMessage]);
 
-    // Análise da IA
+    // Análise da IA com linguagem acessível para crianças com TDAH
     setTimeout(() => {
       let responseText = "";
 
       if (mood.needsAlert) {
-        responseText = `Obrigada por compartilhar como você está se sentindo. Percebi que você está ${mood.label.toLowerCase()} e isso é importante.\n\n`;
+        responseText = `💙 Obrigada por me contar como você está se sentindo!\n\nVi que você tá ${mood.label.toLowerCase()} e isso é super importante!\n\n`;
 
         if (mood.value === "worried" || mood.value === "anxious") {
-          responseText += `💙 Enquanto isso, que tal tentarmos alguns exercícios de respiração? Posso te guiar.\n\n`;
-          responseText += `Também posso sugerir atividades relaxantes ou conversar sobre o que está te deixando assim.`;
+          responseText += `Quando a gente fica ansioso ou preocupado, às vezes ajuda respirar fundo. Quer tentar?\n\n`;
+          responseText += `Também posso te sugerir umas coisas legais pra relaxar, ou a gente pode conversar sobre o que tá te deixando assim. Tá tudo bem! 🌟`;
         } else if (mood.value === "sad") {
-          responseText += `💙 Estou aqui para te ouvir. Quer conversar sobre o que está acontecendo?\n\n`;
-          responseText += `Lembre-se: seus sentimentos são válidos e não há problema em não estar bem.`;
+          responseText += `Eu tô aqui pra te ouvir, tá bom? Quer me contar o que aconteceu?\n\n`;
+          responseText += `Lembra: tudo que você sente é importante e tá tudo bem não estar bem às vezes. Você não tá sozinho! 💙`;
         } else if (mood.value === "angry") {
-          responseText += `💙 Entendo sua frustração. Vamos trabalhar juntos para você se sentir melhor.\n\n`;
-          responseText += `Posso te ensinar técnicas de gerenciamento de emoções ou podemos fazer uma pausa relaxante.`;
+          responseText += `Eu entendo que você tá chateado. Vamos trabalhar juntos pra você se sentir melhor!\n\n`;
+          responseText += `Posso te ensinar uns truques pra quando a gente fica com raiva, ou a gente pode fazer uma pausa e relaxar um pouco. O que você prefere? 🌈`;
         } else if (mood.value === "tired") {
-          responseText += `💙 Descanso é fundamental! Vamos ajustar seu cronograma de estudos.\n\n`;
-          responseText += `Que tal fazermos pausas mais frequentes? Posso criar um plano personalizado para você.`;
+          responseText += `Todo mundo fica cansado às vezes! Descansar é muito importante!\n\n`;
+          responseText += `Que tal a gente fazer pausas mais frequentes? Posso criar um plano de estudos bem legal e tranquilo pra você! ✨`;
         }
       } else {
         if (mood.value === "happy") {
-          responseText = `Que maravilha! ${mood.emoji} Fico feliz em saber que você está bem!\n\n`;
-          responseText += `Vamos aproveitar essa energia positiva para aprender algo novo? Tenho ótimos desafios para você!`;
+          responseText = `Que legal! ${mood.emoji} Fico super feliz em saber que você tá bem!\n\n`;
+          responseText += `Vamos aproveitar essa energia boa pra aprender algo novo? Tenho uns desafios super legais pra você! 🚀`;
         } else if (mood.value === "calm") {
-          responseText = `Ótimo! ${mood.emoji} Um estado calmo é perfeito para aprender.\n\n`;
-          responseText += `Vamos focar em atividades que mantenham esse equilíbrio. O que você gostaria de estudar hoje?`;
+          responseText = `Ótimo! ${mood.emoji} Quando a gente tá calmo, fica mais fácil aprender!\n\n`;
+          responseText += `Vamos focar em coisas que te ajudem a continuar assim tranquilo. O que você quer estudar hoje? 📚`;
         } else {
           responseText = `Tudo bem estar ${mood.label.toLowerCase()}. ${
             mood.emoji
           }\n\n`;
-          responseText += `Se precisar de algo para melhorar seu dia, estou aqui! Posso sugerir atividades relaxantes ou conteúdos interessantes.`;
+          responseText += `Se você quiser, posso te sugerir umas coisas pra deixar seu dia melhor! Pode ser algo pra relaxar ou conteúdos legais. Me fala! 🌟`;
         }
       }
 
@@ -609,7 +614,7 @@ export function ChatAssistant({ user, onClose }: ChatAssistantProps) {
             )}
 
             <div className="flex gap-3">
-              {/* Botão de anexo - apenas para tom "Aprendizado" */}
+              {/* Botão de anexo - OMITIDO para tons "Humor" e "Relaxar" */}
               {currentSession === "learning" && (
                 <>
                   <input
@@ -643,8 +648,8 @@ export function ChatAssistant({ user, onClose }: ChatAssistantProps) {
                 onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
                 placeholder={
                   pendingFile
-                    ? "Adicione um comentário sobre o arquivo (opcional)..."
-                    : "Digite sua mensagem..."
+                    ? "Quer escrever algo sobre o arquivo? (pode deixar em branco)"
+                    : "Escreve aqui sua mensagem..."
                 }
                 disabled={isProcessing}
                 className="flex-1 px-4 py-3 border-4 border-[#3e2723] bg-white text-[#3e2723] placeholder-[#8d6e63] focus:outline-none focus:border-[#5a9e36] disabled:opacity-50 disabled:cursor-not-allowed"
@@ -667,31 +672,31 @@ export function ChatAssistant({ user, onClose }: ChatAssistantProps) {
               </button>
             </div>
 
-            {/* Mensagem de ajuda - varia conforme o tom */}
+            {/* Mensagem de ajuda - varia conforme o tom - adaptada para linguagem acessível */}
             <div className="mt-3 flex items-center gap-2 text-sm text-[#6d4c41]">
               {currentSession === "learning" ? (
                 <>
                   <Upload className="w-4 h-4" />
                   <span>
                     {pendingFile
-                      ? "📎 Arquivo anexado! Adicione um comentário ou envie direto."
-                      : "Envie PDFs, imagens ou textos para análise. Faça perguntas e receba orientações de estudo."}
+                      ? "📎 Arquivo anexado! Pode escrever algo sobre ele ou enviar direto."
+                      : "Manda arquivos (PDF, imagens ou textos) pra eu te ajudar! Ou só faz perguntas! 😊"}
                   </span>
                 </>
               ) : currentSession === "mood" ? (
                 <>
                   <Heart className="w-4 h-4" />
                   <span>
-                    Compartilhe como você está se sentindo. Estou aqui para te
-                    apoiar e acolher.
+                    Me conta como você tá se sentindo! Estou aqui pra te escutar
+                    e ajudar! 💙
                   </span>
                 </>
               ) : (
                 <>
                   <Sparkles className="w-4 h-4" />
                   <span>
-                    Vamos com calma... Respire fundo e me conte o que está
-                    pensando.
+                    Calma... Sem pressa! Respira fundo e me conta o que você tá
+                    pensando. ✨
                   </span>
                 </>
               )}
