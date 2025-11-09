@@ -2,6 +2,7 @@ import OpenAI from "openai";
 import { LLMRequest, LLMResponse, ToneType } from "../types/assistant";
 
 /**
+ * Serviço de integração com GitHub Models para assistente virtual
  * Configuração do GitHub Models
  */
 const GITHUB_TOKEN = import.meta.env.VITE_GITHUB_TOKEN;
